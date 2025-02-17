@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import "./css/SideBar.css"
+import "./css/App.css"
 
 const Sidebar = () => {
   return (
@@ -10,6 +11,9 @@ const Sidebar = () => {
     <a href="/ItemStorage">Item Storage</a>
     <a href="/ClaimedItems">Claimed Items</a>
     <a href="/ReportGeneration">Report Generation</a>
+    <a href="Account"> Account</a>
+    <a href="Logout"> Log Out</a>
+
 </ul>
   );
 };
