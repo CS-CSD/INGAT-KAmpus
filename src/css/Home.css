@@ -1,0 +1,8 @@
+.HomePage {
+    display: flex; /* Makes sidebar and content sit side by side */
+}
+
+.Content {
+    margin-left: 250px; /* Adjust based on the sidebar's width */
+    padding: 20px; /* Adds space inside */
+}

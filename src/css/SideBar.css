@@ -1,29 +1,36 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-    padding: 0;
-  }
-  
-  .Sidebar {
-    width: 250px;
-    height: 100vh; 
-    background-color: #E5E5E5; 
-    color: black; 
-    padding: 20px;
-    display: flex;
-    flex-direction: column; 
-    border-radius: 10px;
-    position: fixed;
-    top: 0;
-    left: 0;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  .Sidebar a {
-    text-decoration: none;
-    color: black; /* Or any color you prefer */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.Sidebar {
+  width: 250px;
+  height: 100vh; 
+  background-color: #E5E5E5; 
+  color: black; 
+  padding: 20px;
+  display: flex;
+  flex-direction: column; 
+  border-radius: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.Sidebar a {
+  text-decoration: none;
+  color: black; /* Or any color you prefer */
 }

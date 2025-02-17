@@ -1,20 +1,21 @@
 import { Link } from "react-router-dom";
-import "./css/SideBar.css"
-import "./css/App.css"
+import "./css/SideBar.css";
+import "./css/App.css";
 
 const Sidebar = () => {
   return (
-<ul className="Sidebar">
-<img src="/titlecard 2.png" alt="INGAT KAmpus" />
-    <a href="/Home">Dashboard</a>
-    <a href="/ItemRegister">Item Register</a>
-    <a href="/ItemStorage">Item Storage</a>
-    <a href="/ClaimedItems">Claimed Items</a>
-    <a href="/ReportGeneration">Report Generation</a>
-    <a href="Account"> Account</a>
-    <a href="Logout"> Log Out</a>
-
-</ul>
+    <nav className="Sidebar">
+      <img src="/titlecard 2.png" alt="INGAT KAmpus" />
+      <ul>
+        <li><Link to="/home">Dashboard</Link></li>
+        <li><Link to="/item-register">Item Register</Link></li>
+        <li><Link to="/item-storage">Item Storage</Link></li>
+        <li><Link to="/claimed-items">Claimed Items</Link></li>
+        <li><Link to="/report-generation">Report Generation</Link></li>
+        <li><Link to="/account">Account</Link></li>
+        <li><Link to="/logout">Log Out</Link></li>
+      </ul>
+    </nav>
   );
 };
 

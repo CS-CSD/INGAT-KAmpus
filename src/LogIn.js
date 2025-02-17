@@ -11,7 +11,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Simple authentication check (replace with real authentication logic)
-    if (email === "t@e.com" && password === "pass") {
+    if (email === "test@e.com" && password === "pass") {
       navigate("/home"); // Redirect to homepage
     } else {
       alert("Invalid credentials");
