@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "./SideBar"; // Ensure correct import
+import Sidebar from "./SideBar"; 
 import "./css/ItemStorage.css";
 
 const ItemStorage = () => {
@@ -42,7 +42,7 @@ const ItemStorage = () => {
             </thead>
             <tbody>
               {items.map((item, index) =>
-                !item.claimed ? ( // Only show unclaimed items
+                !item.claimed ? ( 
                   <tr key={index}>
                     <td>{item.uid}</td>
                     <td>{item.brand}</td>

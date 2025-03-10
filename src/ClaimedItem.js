@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "./SideBar"; // Ensure correct import
+import Sidebar from "./SideBar"; 
 
 
 const ClaimedItems = () => {
@@ -7,7 +7,7 @@ const ClaimedItems = () => {
 
   useEffect(() => {
     const storedItems = JSON.parse(localStorage.getItem("items")) || [];
-    const filteredItems = storedItems.filter(item => item.claimed); // Get only claimed items
+    const filteredItems = storedItems.filter(item => item.claimed); 
     setClaimedItems(filteredItems);
   }, []);
 

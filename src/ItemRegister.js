@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sidebar from "./SideBar"; // Ensure correct import
+import Sidebar from "./SideBar"; 
 import "./css/ItemRegister.css";
 
 const RegisterItem = () => {
@@ -36,14 +36,14 @@ const RegisterItem = () => {
       reader.onloadend = () => {
         newItem.image = reader.result;
 
-        // Save new item to localStorage
+        
         const storedItems = JSON.parse(localStorage.getItem("items")) || [];
         storedItems.push(newItem);
         localStorage.setItem("items", JSON.stringify(storedItems));
 
         alert("Item successfully registered!");
 
-        // Reset form fields
+        
         setFormData({
           uid: "",
           brand: "",
@@ -60,14 +60,14 @@ const RegisterItem = () => {
       };
       reader.readAsDataURL(formData.image);
     } else {
-      // Save without image
+      
       const storedItems = JSON.parse(localStorage.getItem("items")) || [];
       storedItems.push(newItem);
       localStorage.setItem("items", JSON.stringify(storedItems));
 
       alert("Item successfully registered!");
 
-      // Reset form fields
+ 
       setFormData({
         uid: "",
         brand: "",

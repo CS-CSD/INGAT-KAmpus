@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/App.css"
+import "./css/LoginPage.css";  
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Hook for navigation
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simple authentication check (replace with real authentication logic)
     if (email === "test@e.com" && password === "pass") {
-      navigate("/home"); // Redirect to homepage
+      navigate("/home");
     } else {
       alert("Invalid credentials");
     }
@@ -20,6 +20,9 @@ const LoginPage = () => {
 
   return (
     <div className="login-container">
+      
+      <h1 className="page-title">INGAT KAmpus</h1>
+
       <div className="login-box">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -35,13 +38,25 @@ const LoginPage = () => {
           </div>
           <div>
             <label className="block mb-1">Password</label>
-            <input
-              type="password"
-              className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span
+                className="absolute right-3 top-3 cursor-pointer text-gray-400"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+              </span>
+            </div>
+          </div>
+          <div className="text-right">
+            <a href="#" className="text-blue-400 text-sm hover:underline">
+              Forgot Password?
+            </a>
           </div>
           <button
             type="submit"

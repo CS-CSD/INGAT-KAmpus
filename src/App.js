@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./LogIn";
-import HomePage from "./Home"; // Create this component
+import HomePage from "./Home"; 
 import RegisterItem from "./ItemRegister";
 import ItemStorage from "./ItemStorage";
 import ClaimedItems from "./ClaimedItem";

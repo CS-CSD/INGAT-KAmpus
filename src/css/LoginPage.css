@@ -1,0 +1,66 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+    background: url("../Pictures/dlsl.jpg")  no-repeat center center/cover;
+    position: relative;
+}
+
+
+.page-title {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    font-size: 50px;
+    font-weight: bold;
+    color: rgb(7, 100, 23); 
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-box h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #218838
+}
+
+.text-right a {
+    color: white !important; 
+    text-decoration: none; 
+}
+
+.text-right a:hover {
+    text-decoration: underline; 
+}
