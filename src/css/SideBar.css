@@ -12,14 +12,14 @@ body {
 ul {
   list-style-type: none;
   padding: 0;
-  margin: 0;
+  margin:0;
 }
 
 
 .Sidebar {
   width: 250px;
   height: 100vh; 
-  background-color: #D9D9D9; 
+  background-color: hsl(0, 0%, 85%); 
   color: black; 
   padding: 20px;
   display: flex;
@@ -32,5 +32,27 @@ ul {
 
 .Sidebar a {
   text-decoration: none;
+
   color: black; /* Or any color you prefer */
+}
+
+.Sidebar li{
+  margin-top: 15px;
+}
+
+.Sidebar li:hover{
+  background-color:hsl(0, 0%, 100%); 
+  padding: 5px;
+  padding-left: 20px;
+}
+
+#active {
+  background-color: #32620e; /* Active item color */
+  color: white;
+  font-weight: bold;
+  text-decoration-color: white;
+  border-left: 2px solid white;
+  padding-right: 10px;
+  margin-left: 15px;
+  padding-left: 10px;
 }
