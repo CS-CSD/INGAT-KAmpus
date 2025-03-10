@@ -1,12 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import Sidebar from "./SideBar.js";
 import "./css/Home.css";
 
 const HomePage = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("user"); 
+        navigate("/Login.js"); 
+    };
+
     return (
         <div className="HomePage">
             <Sidebar />
             <div className="Content">
-                {/* Top Bar with Search and User Icon */}
                 <div className="TopBar">
                     <h2>Dashboard</h2>
                     <div className="SearchBar">
@@ -43,3 +50,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+

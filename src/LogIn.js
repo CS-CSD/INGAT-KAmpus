@@ -10,13 +10,15 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     if (email === "test@e.com" && password === "pass") {
+      localStorage.setItem("user", JSON.stringify({ email }));
       navigate("/home");
     } else {
       alert("Invalid credentials");
     }
   };
+  
 
   return (
     <div className="login-container">
