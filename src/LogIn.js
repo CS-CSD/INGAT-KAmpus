@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./css/LoginPage.css";  
+import { Eye, EyeOff } from "lucide-react";  
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -22,50 +23,43 @@ const LoginPage = () => {
 
   return (
     <div className="login-container">
-      
-      <h1 className="page-title">INGAT KAmpus</h1>
+      <Link to="/" className="logo-container">
+      <img src="/INGATKAmpusFinal.png" alt="INGAT KAmpus Logo" className="logo" />
+      </Link>
 
       <div className="login-box">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h2>Welcome</h2>
+        <form onSubmit={handleSubmit}>
           <div>
-            <label className="block mb-1">Email</label>
             <input
               type="email"
-              className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="block mb-1">Password</label>
-            <div className="relative">
+            <div className="password-container">
               <input
                 type={showPassword ? "text" : "password"}
-                className="w-full p-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <span
-                className="absolute right-3 top-3 cursor-pointer text-gray-400"
+                className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
               >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             </div>
           </div>
           <div className="text-right">
-            <a href="#" className="text-blue-400 text-sm hover:underline">
-              Forgot Password?
-            </a>
+            <a href="#">Forgot Password?</a>
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded font-bold"
-          >
-            Login
-          </button>
+          <button type="submit">Login</button>
         </form>
       </div>
     </div>

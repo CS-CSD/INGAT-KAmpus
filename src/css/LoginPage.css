@@ -3,11 +3,11 @@
     justify-content: center;
     align-items: center;
     height: 100vh; 
-    background: url("../Pictures/dlsl.jpg")  no-repeat center center/cover;
+    background: url("../Pictures/DLSL_EDU.jpg") no-repeat center center/cover;
     position: relative;
 }
 
-
+/* Updated title to match new design */
 .page-title {
     position: absolute;
     top: 20px;
@@ -17,50 +17,118 @@
     color: rgb(7, 100, 23); 
 }
 
+/* Updated login box to match the rounded style */
 .login-box {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 2rem;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 40px;
+    border-radius: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 100%;
+    width: 380px;
     max-width: 400px;
     text-align: center;
 }
 
+/* Updated heading to match bold, larger design */
 .login-box h2 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     margin-bottom: 20px;
+    color: ffffff;
 }
 
+/* Updated input field design */
 input {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 14px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background: #f3f3f3;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
 }
 
+input:focus {
+    background: #eaeaea;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Password visibility toggle */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container input {
+    padding-right: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+}
+
+/* Updated button styling to match green theme */
 button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background-color: #28a745;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background-color: #218838
+    background-color: #218838;
+    transform: scale(1.02);
+}
+
+/* Forgot password section with improved design */
+.text-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
 }
 
 .text-right a {
-    color: white !important; 
+    color: black;
     text-decoration: none; 
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .text-right a:hover {
     text-decoration: underline; 
 }
+
+/* Added new styling for the entire form */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.logo-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+  
+  .logo {
+    height: 50px; /* Adjust as needed */
+    width: auto;
+  }
+  
