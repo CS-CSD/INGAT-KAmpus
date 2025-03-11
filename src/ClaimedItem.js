@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "./SideBar"; 
+import Sidebar from "./SideBar";
+import "./css/ClaimedItem.css"; // Import the CSS file (note the filename)
 
-
-const ClaimedItems = () => {
+const ClaimedItem = () => {
   const [claimedItems, setClaimedItems] = useState([]);
 
   useEffect(() => {
     const storedItems = JSON.parse(localStorage.getItem("items")) || [];
-    const filteredItems = storedItems.filter(item => item.claimed); 
+    const filteredItems = storedItems.filter((item) => item.claimed); // Ensure items have the "claimed" property
     setClaimedItems(filteredItems);
   }, []);
 
   return (
     <div className="flex">
       <Sidebar />
-      <div className="MainContent">
+      <div className="ClaimedItemContent">
         <h1>Claimed Items</h1>
         {claimedItems.length === 0 ? (
           <p>No claimed items yet.</p>
@@ -45,7 +45,9 @@ const ClaimedItems = () => {
                   <td>{item.dateSurrendered}</td>
                   <td>{item.description}</td>
                   <td>
-                    {item.image && <img src={item.image} alt="Item" width="50" height="50" />}
+                    {item.image && (
+                      <img src={item.image} alt="Item" width="50" height="50" />
+                    )}
                   </td>
                 </tr>
               ))}
@@ -57,4 +59,4 @@ const ClaimedItems = () => {
   );
 };
 
-export default ClaimedItems;
+export default ClaimedItem;
