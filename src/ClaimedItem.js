@@ -1,53 +1,72 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
+import {supabase} from "./supabase";
 import "./css/ClaimedItem.css"; // Import the CSS file (note the filename)
 
 const ClaimedItem = () => {
-  const [claimedItems, setClaimedItems] = useState([]);
+  const [items, setItems] = useState([]);
 
+  // Fetch data from Supabase
   useEffect(() => {
-    const storedItems = JSON.parse(localStorage.getItem("items")) || [];
-    const filteredItems = storedItems.filter((item) => item.claimed); // Ensure items have the "claimed" property
-    setClaimedItems(filteredItems);
+    fetchItems();
   }, []);
+
+  async function fetchItems() {
+    try {
+      const { data, error } = await supabase
+        .from("registered_items") // Make sure this name matches exactly
+        .select("*")
+        .eq("status", "claimed");
+  
+      console.log("Fetched data:", data);
+      console.log("Fetch error:", error);
+  
+      if (error) throw error;
+      if (data) {
+        setItems(data);
+      }
+    } catch (error) {
+      console.error("Fetch failed:", error.message);
+      alert(error.message);
+    }
+  }
+  
+  
+  
+console.log (items);
 
   return (
     <div className="flex">
       <Sidebar />
       <div className="ClaimedItemContent">
         <h1>Claimed Items</h1>
-        {claimedItems.length === 0 ? (
+        {items.length === 0 ? (
           <p>No claimed items yet.</p>
         ) : (
           <table className="item-table">
             <thead>
               <tr>
-                <th>UID</th>
-                <th>Brand</th>
-                <th>Type</th>
-                <th>Color</th>
+                <th>Category</th>
                 <th>Location Found</th>
                 <th>Date Found</th>
                 <th>Date Surrendered</th>
                 <th>Description</th>
-                <th>Image</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {claimedItems.map((item, index) => (
+              {items.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.uid}</td>
-                  <td>{item.brand}</td>
-                  <td>{item.type}</td>
-                  <td>{item.color}</td>
-                  <td>{item.locationFound}</td>
-                  <td>{item.dateFound}</td>
-                  <td>{item.dateSurrendered}</td>
+                  <td>{item.category}</td>
+                  <td>{item.location_found}</td>
+                  <td>{new Date(item.datetime_found).toLocaleString()}</td>
+                  <td>{new Date(item.datetime_surrendered).toLocaleString()}</td>
                   <td>{item.description}</td>
+                  <td>{item.status}</td>
                   <td>
-                    {item.image && (
+                    {/* {item.image && (
                       <img src={item.image} alt="Item" width="50" height="50" />
-                    )}
+                    )} */}
                   </td>
                 </tr>
               ))}
