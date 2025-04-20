@@ -3,18 +3,50 @@ import Sidebar from "./SideBar";
 import "./css/ItemRegister.css"; // Ensure the CSS file is linked
 import {supabase} from './supabase'; // Assuming you have your Supabase client set up
 
+
 const RegisterItem = () => {
   const [formData, setFormData] = useState({
     category: "",
     locationFound: "",
-    dateFound: "",
-    timeFound: "",
+    datetimeFound: "",
+    description: "",
+    surrenderedBy: "",
+    storedIn: "",
     dateSurrendered: "",
     timeSurrendered: "",
-    description: "",
-    storedIn: "",  // Dropdown for storing location
-    image: null,   // Optional image for the item
+    dateFound: "",
+    timeFound: "",
   });
+
+
+const handleRegisterItem = async () => {
+  const datetimeFound = `${formData.dateFound} ${formData.timeFound}`;
+  const datetimeSurrendered = `${formData.dateSurrendered} ${formData.timeSurrendered}`;
+ try {
+      const { data, error } = await supabase
+        .from("registered_items")
+        .insert({
+          category: formData.category,
+          location_found:formData.locationFound,
+          description: formData.description,
+          surrendered_by: formData.surrenderedBy,
+          stored_in: formData.storedIn,
+          datetime_surrendered: datetimeSurrendered,
+          datetime_found: datetimeFound,
+          processed_by: "name",
+          claim_status: "unclaimed",
+        })
+  
+      console.log("Fetched data:", data);
+      console.log("Fetch error:", error);
+  
+      if (error) throw error;
+  
+    } catch (error) {
+      console.error("Fetch failed:", error.message);
+      alert(error.message);
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,54 +57,6 @@ const RegisterItem = () => {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const newItem = { ...formData };
-
-    // Combine date and time for datetime fields
-    const datetimeFound = `${newItem.dateFound} ${newItem.timeFound}`;
-    const datetimeSurrendered = `${newItem.dateSurrendered} ${newItem.timeSurrendered}`;
-
-    try {
-      // Insert the item into the Supabase database
-      const { data, error } = await supabase
-        .from('registered_items')
-        .insert([
-          {
-            category: newItem.category,
-            location_found: newItem.locationFound,
-            datetime_found: datetimeFound,
-            datetime_surrendered: datetimeSurrendered,
-            description: newItem.description,
-            status: "Registered",  // Default status
-            stored_in: newItem.storedIn,  // Storing location
-            image_url: "", // If you want to handle the image separately, adjust here
-          }
-        ]);
-
-      if (error) throw error;
-
-      alert("Item successfully registered!");
-
-      // Reset the form
-      setFormData({
-        category: "",
-        locationFound: "",
-        dateFound: "",
-        timeFound: "",
-        dateSurrendered: "",
-        timeSurrendered: "",
-        description: "",
-        storedIn: "",
-        image: null,
-      });
-    } catch (err) {
-      console.error("Error registering item:", err.message);
-      alert("Failed to register item!");
-    }
-  };
-
   // Dropdown options for storing location
   const storedLocations = ["Unknown", "MB", "JRF", "JRN", "CB", "South Lounge", "Student Center", "Sports Complex"];
 
@@ -81,12 +65,12 @@ const RegisterItem = () => {
       <Sidebar />
       <div className="ItemRegisterContent">
         <h1>Item Register</h1>
-        <form onSubmit={handleSubmit} className="form-container">
+        <form className="form-container"onSubmit={(e) => {e.preventDefault();handleRegisterItem();}}>
           <div className="columns">
-            <div className="column1">
+            {/* <div className="column1">
               <label className="label">Insert Image (optional)</label>
               <input type="file" name="image" accept="image/*" onChange={handleImageChange} />
-            </div>
+            </div> */}
 
             <div className="column2">
               <label className="label">Item Category</label>
@@ -99,15 +83,30 @@ const RegisterItem = () => {
                 required
               />
 
-              <label className="label">Location Found</label>
+              <label className="label">Surrendered By</label>
               <input
                 type="text"
-                name="locationFound"
-                placeholder="Location Found"
-                value={formData.locationFound}
+                name="surrenderedBy"
+                placeholder="Surrenedered by"
+                value={formData.surrenderedBy}
                 onChange={handleChange}
                 required
               />
+
+
+              <label className="label">Location Found</label>
+                <select
+                  name="locationFound"
+                  value={formData.locationFound}
+                  onChange={handleChange}
+                  required
+                >
+                 <option value="" disabled>Select location</option>
+                {storedLocations.map((loc, index) => (
+                  <option key={index} value={loc}>{loc}</option>
+                ))}
+              </select>
+
 
               <label className="label">Date Found</label>
               <input
@@ -122,6 +121,7 @@ const RegisterItem = () => {
               <input
                 type="time"
                 name="timeFound"
+                step="1"
                 value={formData.timeFound}
                 onChange={handleChange}
                 required
@@ -140,6 +140,7 @@ const RegisterItem = () => {
               <input
                 type="time"
                 name="timeSurrendered"
+                step="1"
                 value={formData.timeSurrendered}
                 onChange={handleChange}
                 required

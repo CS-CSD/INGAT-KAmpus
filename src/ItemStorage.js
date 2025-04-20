@@ -16,7 +16,7 @@ const ItemStorage = () => {
       const { data, error } = await supabase
         .from("registered_items") // Make sure this name matches exactly
         .select("*")
-        .eq("status", "unclaimed");
+        .eq("claim_status", "unclaimed");
   
       console.log("Fetched data:", data);
       console.log("Fetch error:", error);
@@ -61,7 +61,7 @@ console.log (items);
                   <td>{new Date(item.datetime_found).toLocaleString()}</td>
                   <td>{new Date(item.datetime_surrendered).toLocaleString()}</td>
                   <td>{item.description}</td>
-                  <td>{item.status}</td>
+                  <td>{item.claim_status}</td>
                   <td>
                     {/* <button onClick={() => markAsClaimed(item.id)}>
                       Mark as Claimed
