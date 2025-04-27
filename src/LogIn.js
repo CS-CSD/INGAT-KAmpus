@@ -2,19 +2,44 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./css/LoginPage.css";  
 import { Eye, EyeOff } from "lucide-react";  
+import { supabase } from './supabase';
+import { useUser } from './userContext';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const trimmedId = id.trim();
+  const trimmedPassword = password.trim();
+  const { setUser } = useUser();
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
   
-    if (email === "test@e.com" && password === "pass") {
-      localStorage.setItem("user", JSON.stringify({ email }));
-      navigate("/home");
+    console.log("Attempting login with ID:", trimmedId, "and Password:", trimmedPassword); // Debugging log
+  
+    // Query Supabase
+    const { data, error } = await supabase
+      .from("accounts_table")
+      .select("*")
+      .eq("id", trimmedId)
+      .eq("password", trimmedPassword)
+      .limit(1); // Ensure we only get one row
+  
+    // Log any error returned by Supabase
+    if (error) {
+      console.error("Error during query:", error.message);
+      alert("Error: " + error.message);  // Display error message to user
+      return;
+    }
+  
+    console.log("Data returned from query:", data); // Log the returned data
+  
+    // Proceed to home page if a match is found
+    if (data && data.length > 0) {
+      setUser(trimmedId);
+      navigate('/home');
     } else {
       alert("Invalid credentials");
     }
@@ -24,18 +49,18 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <Link to="/" className="logo-container">
-      <img src="/INGATKAmpusFinal.png" alt="INGAT KAmpus Logo" className="logo" />
+        <img src="/INGATKAmpusFinal.png" alt="INGAT KAmpus Logo" className="logo" />
       </Link>
 
       <div className="login-box">
         <h2>Welcome</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div>
             <input
-              type="email"
-              placeholder="Username"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"  // Changed from "id" to "text"
+              placeholder="ID"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
               required
             />
           </div>
@@ -57,7 +82,7 @@ const LoginPage = () => {
             </div>
           </div>
           <div className="text-right">
-            <a href="#">Forgot Password?</a>
+            <button type="button">Forgot Password?</button>
           </div>
           <button type="submit">Login</button>
         </form>

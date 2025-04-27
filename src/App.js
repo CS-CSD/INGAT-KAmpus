@@ -7,9 +7,11 @@ import ClaimedItems from "./ClaimedItem";
 import ReportGeneration from "./ReportGeneration";
 import Account from "./Account";
 import Logout from "./Logout"; 
+import { UserProvider } from './userContext';
 
 const App = () => {
   return (
+    <UserProvider>
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
@@ -22,6 +24,7 @@ const App = () => {
         <Route path="/logout" element={<Logout />} /> 
       </Routes>
     </Router>
+    </UserProvider>
   );
 };
 

@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Sidebar from "./SideBar"; 
 import "./css/ItemRegister.css"; // Ensure the CSS file is linked
 import {supabase} from './supabase'; // Assuming you have your Supabase client set up
-
+import { useUser } from './userContext'; 
 
 const RegisterItem = () => {
+  const { userId } = useUser(); 
   const [formData, setFormData] = useState({
     category: "",
     locationFound: "",
@@ -33,7 +34,7 @@ const handleRegisterItem = async () => {
           stored_in: formData.storedIn,
           datetime_surrendered: datetimeSurrendered,
           datetime_found: datetimeFound,
-          processed_by: "name",
+          processed_by: userId,
           claim_status: "unclaimed",
         })
   
@@ -41,7 +42,22 @@ const handleRegisterItem = async () => {
       console.log("Fetch error:", error);
   
       if (error) throw error;
-  
+      setFormData({
+        category: "",
+        locationFound: "",
+        datetimeFound: "",
+        description: "",
+        surrenderedBy: "",
+        storedIn: "",
+        dateSurrendered: "",
+        timeSurrendered: "",
+        dateFound: "",
+        timeFound: "",
+      });
+
+      // Show success alert
+      alert("Item successfully registered!");
+      
     } catch (error) {
       console.error("Fetch failed:", error.message);
       alert(error.message);
