@@ -12,7 +12,8 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const trimmedId = id.trim();
   const trimmedPassword = password.trim();
-  const { setUser } = useUser();
+  const { setUser, setRole } = useUser();
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -38,8 +39,15 @@ const LoginPage = () => {
   
     // Proceed to home page if a match is found
     if (data && data.length > 0) {
+      const userData = data[0];
+      console.log("Fetched Role:", userData.role);
       setUser(trimmedId);
-      navigate('/home');
+      setRole(userData.role);
+      if (userData.role === "student") {
+        navigate('/student-view'); // 👈 Go to item storage if student
+      } else {
+        navigate('/home'); // 👈 Otherwise go to home
+      }
     } else {
       alert("Invalid credentials");
     }

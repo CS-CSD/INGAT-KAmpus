@@ -68,11 +68,6 @@ const HomePage = () => {
             subscription.unsubscribe();
         };
     }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem("user"); 
-        navigate("/Login.js"); 
-    };
     
     const handleViewAllItems = () => {
         navigate("/items"); // Navigate to items listing page
