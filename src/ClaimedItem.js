@@ -14,9 +14,8 @@ const ClaimedItem = () => {
   async function fetchItems() {
     try {
       const { data, error } = await supabase
-        .from("registered_items") // Make sure this name matches exactly
+        .from("claimed_items") // Make sure this name matches exactly
         .select("*")
-        .eq("claim_status", "claimed");
   
       console.log("Fetched data:", data);
       console.log("Fetch error:", error);
@@ -52,6 +51,9 @@ console.log (items);
                 <th>Date Surrendered</th>
                 <th>Description</th>
                 <th>Status</th>
+                <th>Claimed by</th>
+                <th>Claim date and time</th>
+                <th>Processed by</th>
               </tr>
             </thead>
             <tbody>
@@ -63,11 +65,14 @@ console.log (items);
                   <td>{new Date(item.datetime_surrendered).toLocaleString()}</td>
                   <td>{item.description}</td>
                   <td>{item.claim_status}</td>
-                  <td>
-                    {/* {item.image && (
+                  <td>{item.claimed_by}</td>
+                  <td>{new Date(item.claimed_dateTime).toLocaleString()}</td>
+                  <td>{item.claiming_processed_by}</td>
+                  {/* <td>
+                    {item.image && (
                       <img src={item.image} alt="Item" width="50" height="50" />
-                    )} */}
-                  </td>
+                    )}
+                  </td> */}
                 </tr>
               ))}
             </tbody>
