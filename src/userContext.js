@@ -3,22 +3,34 @@ import React, { createContext, useState, useContext } from 'react';
 // Create the User Context
 const UserContext = createContext();
 
-// Create a custom hook to use the User Context
+// Custom hook to use the User Context for user data
 export const useUser = () => {
   return useContext(UserContext);
 };
 
-// Create a UserProvider component to wrap around the app
-export const UserProvider = ({ children }) => {
-  const [userId, setUserId] = useState(null); // Default is null (no user logged in)
+// Custom hook to use the User Context for role
+export const useRole = () => {
+  const { userRole } = useContext(UserContext); // Get userRole from the context
+  return userRole; // Return userRole
+};
 
-  // Function to set user ID (called after login)
+// Create a UserProvider component
+export const UserProvider = ({ children }) => {
+  const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  // Function to set user ID
   const setUser = (id) => {
     setUserId(id);
   };
 
+  // Function to set user role
+  const setRole = (role) => {
+    setUserRole(role);
+  };
+
   return (
-    <UserContext.Provider value={{ userId, setUser }}>
+    <UserContext.Provider value={{ userId, setUser, userRole, setRole }}>
       {children}
     </UserContext.Provider>
   );

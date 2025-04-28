@@ -8,6 +8,7 @@ import ReportGeneration from "./ReportGeneration";
 import Account from "./Account";
 import Logout from "./Logout"; 
 import { UserProvider } from './userContext';
+import StudentView from "./StudentView";
 
 const App = () => {
   return (
@@ -21,7 +22,8 @@ const App = () => {
         <Route path="/claimed-items" element={<ClaimedItems />} />
         <Route path="/report-generation" element={<ReportGeneration />} />
         <Route path="/account" element={<Account />} />
-        <Route path="/logout" element={<Logout />} /> 
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/student-view" element={<StudentView/>}/>
       </Routes>
     </Router>
     </UserProvider>
