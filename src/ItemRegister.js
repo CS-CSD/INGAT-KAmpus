@@ -17,52 +17,83 @@ const RegisterItem = () => {
     timeSurrendered: "",
     dateFound: "",
     timeFound: "",
+    image: null, 
   });
 
 
 const handleRegisterItem = async () => {
   const datetimeFound = `${formData.dateFound} ${formData.timeFound}`;
   const datetimeSurrendered = `${formData.dateSurrendered} ${formData.timeSurrendered}`;
- try {
-      const { data, error } = await supabase
-        .from("registered_items")
-        .insert({
-          category: formData.category,
-          location_found:formData.locationFound,
-          description: formData.description,
-          surrendered_by: formData.surrenderedBy,
-          stored_in: formData.storedIn,
-          datetime_surrendered: datetimeSurrendered,
-          datetime_found: datetimeFound,
-          processed_by: userId,
-          claim_status: "unclaimed",
-        })
   
-      console.log("Fetched data:", data);
-      console.log("Fetch error:", error);
-  
-      if (error) throw error;
-      setFormData({
-        category: "",
-        locationFound: "",
-        datetimeFound: "",
-        description: "",
-        surrenderedBy: "",
-        storedIn: "",
-        dateSurrendered: "",
-        timeSurrendered: "",
-        dateFound: "",
-        timeFound: "",
+  try {
+    let imageUrl = null;
+    
+    
+    if (formData.image) {
+      
+      const fileExt = formData.image.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `item-images/${fileName}`;
+      
+   
+     
+      const { error: uploadError } = await supabase.storage
+        .from('items') 
+        .upload(filePath, formData.image);
+        
+      if (uploadError) throw uploadError;
+      
+
+      const { data: urlData } = supabase.storage
+        .from('items')
+        .getPublicUrl(filePath);
+        
+      imageUrl = urlData.publicUrl;
+    }
+    
+    const { data, error } = await supabase
+      .from("registered_items")
+      .insert({
+        category: formData.category,
+        location_found: formData.locationFound,
+        description: formData.description,
+        surrendered_by: formData.surrenderedBy,
+        stored_in: formData.storedIn,
+        datetime_surrendered: datetimeSurrendered,
+        datetime_found: datetimeFound,
+        processed_by: userId,
+        claim_status: "unclaimed",
+        image_url: imageUrl, 
       });
 
-      // Show success alert
-      alert("Item successfully registered!");
-      
-    } catch (error) {
-      console.error("Fetch failed:", error.message);
-      alert(error.message);
-    }
+    console.log("Fetched data:", data);
+    console.log("Fetch error:", error);
+
+    if (error) throw error;
+    
+   
+    setFormData({
+      category: "",
+      locationFound: "",
+      datetimeFound: "",
+      description: "",
+      surrenderedBy: "",
+      storedIn: "",
+      dateSurrendered: "",
+      timeSurrendered: "",
+      dateFound: "",
+      timeFound: "",
+      image: null, 
+    });
+
+    // Show success alert
+    alert("Item successfully registered!");
+    
+  } catch (error) {
+    console.error("Fetch failed:", error.message);
+    alert(error.message);
   }
+}
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,6 +101,7 @@ const handleRegisterItem = async () => {
   };
 
   const handleImageChange = (e) => {
+    // Store the file object when user selects an image
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
@@ -81,12 +113,12 @@ const handleRegisterItem = async () => {
       <Sidebar />
       <div className="ItemRegisterContent">
         <h1>Item Register</h1>
-        <form className="form-container"onSubmit={(e) => {e.preventDefault();handleRegisterItem();}}>
+        <form className="form-container" onSubmit={(e) => {e.preventDefault();handleRegisterItem();}}>
           <div className="columns">
-            {/* <div className="column1">
+            <div className="column1">
               <label className="label">Insert Image (optional)</label>
               <input type="file" name="image" accept="image/*" onChange={handleImageChange} />
-            </div> */}
+            </div>
 
             <div className="column2">
               <label className="label">Item Category</label>
