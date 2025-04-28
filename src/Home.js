@@ -21,7 +21,7 @@ const HomePage = () => {
                     .select("*")
                     .eq("claim_status", "unclaimed")
                     .order("datetime_surrendered", { ascending: false }) 
-                    .limit(5); gi
+                    .limit(5); 
                 
                 if (error) throw error;
                 
