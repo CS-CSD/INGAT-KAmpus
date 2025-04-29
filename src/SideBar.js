@@ -13,7 +13,7 @@ const Sidebar = () => {
         {userRole === "student" ? (
           // If the user is a student, only show "Item Storage" and "Log Out"
           <>
-            <li><Link to="/item-storage">Item Storage</Link></li>
+            <li><Link to="/student-view">Item Storage</Link></li>
             <li><Link to="/logout">Log Out</Link></li>
           </>
         ) : (
@@ -25,6 +25,11 @@ const Sidebar = () => {
             <li><Link to="/claimed-items">Claimed Items</Link></li>
             <li><Link to="/report-generation">Report Generation</Link></li>
             <li><Link to="/account">Account</Link></li>
+            {userRole==="manager"?(
+              <>
+                <li><Link to="/create-account">Create Account</Link></li>
+              </>
+            ):null}
             <li><Link to="/logout">Log Out</Link></li>
           </>
         )}

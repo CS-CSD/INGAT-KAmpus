@@ -9,6 +9,7 @@ import Account from "./Account";
 import Logout from "./Logout"; 
 import { UserProvider } from './userContext';
 import StudentView from "./StudentView";
+import CreateAccount from "./CreateAccount";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/account" element={<Account />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/student-view" element={<StudentView/>}/>
+        <Route path="/create-account" element={<CreateAccount></CreateAccount>}/>
       </Routes>
     </Router>
     </UserProvider>

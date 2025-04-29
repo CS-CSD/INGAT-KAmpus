@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "./supabase"; // your supabase client
 import Sidebar from "./SideBar";
 import "./css/ClaimedItem.css";
-import { useUser } from './userContext'; 
+import { useUser, useRole} from './userContext'; 
 
 const ItemStorage = () => {
-    const { userId } = useUser(); 
+    const { userId } = useUser();
+    const userRole = useRole();
   const [items, setItems] = useState([]);
   const [showModal, setShowModal] = useState(false); // Modal visibility
   const [selectedItem, setSelectedItem] = useState(null); // The item being claimed
