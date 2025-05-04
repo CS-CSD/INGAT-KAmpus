@@ -68,22 +68,17 @@ const HomePage = () => {
         };
     }, []);
     
-    
-
-  
-
     const handleViewAllItems = () => {
-        navigate("/items");
+        navigate("/item-storage");
     };
 
-   
     const formatDate = (dateString) => {
         if (!dateString) return "Unknown";
         const date = new Date(dateString);
         return date.toLocaleDateString();
     };
 
-    // Items to display - either search results or recent items
+    
     const itemsToDisplay = isSearching ? searchResults : recentItems;
 
     return (
@@ -95,7 +90,7 @@ const HomePage = () => {
                     
                 </div>
 
-                {/* Announcements Section */}
+              
                 <div className="Announcements">
                     <h3>Announcements</h3>
                     <div className="AnnouncementBox">
@@ -103,7 +98,7 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                {/* Lost Items Section */}
+                
                 <div className="LostItems">
                     <h3>
                         {isSearching ? 
@@ -148,7 +143,7 @@ const HomePage = () => {
                         </div>
                     )}
 
-                    {/* Show new items count only when not searching */}
+                    
                     {!isSearching && (
                         <div className="NewLostItems">
                             <span className="Count">{newItemsCount}</span>
