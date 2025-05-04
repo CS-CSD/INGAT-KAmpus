@@ -15,31 +15,69 @@ const ItemStorage = () => {
     const [timeClaimed, setTimeClaimed] = useState('');
     const [dateClaimed, setDateClaimed] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
+    const [sortField, setSortField] = useState('datetime_surrendered');
+    const [sortDirection, setSortDirection] = useState('desc');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [categories, setCategories] = useState([]);
 
     // Fetch data from Supabase
     useEffect(() => {
         fetchItems();
+        fetchCategories();
     }, []);
 
-    // Filter items when searchQuery changes
+    // Fetch unique categories for filter dropdown
+    async function fetchCategories() {
+        try {
+            const { data, error } = await supabase
+                .from("registered_items")
+                .select("category")
+                .neq("category", null);
+
+            if (error) throw error;
+            if (data) {
+                const uniqueCategories = [...new Set(data.map(item => item.category))];
+                setCategories(uniqueCategories);
+            }
+        } catch (error) {
+            console.error("Error fetching categories:", error.message);
+        }
+    }
+
+    // Apply filters and sorting whenever dependencies change
     useEffect(() => {
-        if (searchQuery.trim() === '') {
-            setFilteredItems(items);
-            setIsSearching(false);
-            return;
+        let result = [...items];
+
+        // Apply search filter
+        if (searchQuery.trim() !== '') {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(item => 
+                item.category.toLowerCase().includes(query) ||
+                item.description.toLowerCase().includes(query) ||
+                item.location_found.toLowerCase().includes(query) ||
+                (item.claim_status && item.claim_status.toLowerCase().includes(query))
+            );
         }
 
-        const filtered = items.filter(item => 
-            item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.location_found.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.claim_status.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        
-        setFilteredItems(filtered);
-        setIsSearching(true);
-    }, [searchQuery, items]);
+        // Apply category filter
+        if (categoryFilter !== 'all') {
+            result = result.filter(item => item.category === categoryFilter);
+        }
+
+        // Apply sorting
+        result.sort((a, b) => {
+            if (a[sortField] < b[sortField]) {
+                return sortDirection === 'asc' ? -1 : 1;
+            }
+            if (a[sortField] > b[sortField]) {
+                return sortDirection === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+
+        setFilteredItems(result);
+    }, [items, searchQuery, sortField, sortDirection, statusFilter, categoryFilter]);
 
     const handleOpenModal = (item) => {
         setSelectedItem(item);
@@ -66,7 +104,6 @@ const ItemStorage = () => {
             if (error) throw error;
             if (data) {
                 setItems(data);
-                setFilteredItems(data); // Initialize filteredItems with all items
             }
         } catch (error) {
             console.error("Fetch failed:", error.message);
@@ -81,23 +118,21 @@ const ItemStorage = () => {
         try {
             const { error } = await supabase
                 .from("claimed_items")
-                .insert([
-                    {
-                        id: selectedItem.id,
-                        category: selectedItem.category,
-                        location_found: selectedItem.location_found,
-                        datetime_found: selectedItem.datetime_found,
-                        datetime_surrendered: selectedItem.datetime_surrendered,
-                        description: selectedItem.description,
-                        surrendered_by: selectedItem.surrendered_by,
-                        claim_status: "claimed",
-                        processed_by: selectedItem.processed_by,
-                        stored_in: selectedItem.stored_in,
-                        claimed_by: claimerInfo,
-                        claimed_dateTime: datetimeClaimed,
-                        claiming_processed_by: userId,
-                    },
-                ]);
+                .insert([{
+                    id: selectedItem.id,
+                    category: selectedItem.category,
+                    location_found: selectedItem.location_found,
+                    datetime_found: selectedItem.datetime_found,
+                    datetime_surrendered: selectedItem.datetime_surrendered,
+                    description: selectedItem.description,
+                    surrendered_by: selectedItem.surrendered_by,
+                    claim_status: "claimed",
+                    processed_by: selectedItem.processed_by,
+                    stored_in: selectedItem.stored_in,
+                    claimed_by: claimerInfo,
+                    claimed_dateTime: datetimeClaimed,
+                    claiming_processed_by: userId,
+                }]);
 
             if (error) throw error;
 
@@ -115,84 +150,141 @@ const ItemStorage = () => {
         }
     };
 
-    const clearSearch = () => {
-        setSearchQuery('');
-        setIsSearching(false);
+    const handleSort = (field) => {
+        if (field === sortField) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('desc');
+        }
     };
 
-    const itemsToDisplay = isSearching ? filteredItems : items;
+    const clearFilters = () => {
+        setSearchQuery('');
+        setStatusFilter('all');
+        setCategoryFilter('all');
+        setSortField('datetime_surrendered');
+        setSortDirection('desc');
+    };
+
+    const SortIcon = ({ field }) => (
+        <span className="sort-icon">
+            {sortField === field ? (
+                sortDirection === 'asc' ? '↑' : '↓'
+            ) : '↕'}
+        </span>
+    );
 
     return (
         <div className="flex">
             <Sidebar />
             <div className="ClaimedItemContent">
+              <div className="top-bar">
+                <h1>Item Storage</h1>
+              </div>
                 <div className="storage-header">
-                    <h1>Stored Items</h1>
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            placeholder="Search items..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && setIsSearching(true)}
-                        />
-                        {searchQuery && (
-                            <button className="clear-search" onClick={clearSearch}>
-                                ×
+                 
+                    <div className="controls-container">
+                        <div className="search-container">
+                            <input
+                                type="text"
+                                placeholder="Search items..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                          
+                        </div>
+
+                        <div className="filter-controls">
+                           
+
+                            <div className="filter-group">
+                                <label>Category:</label>
+                                <select 
+                                    value={categoryFilter}
+                                    onChange={(e) => setCategoryFilter(e.target.value)}
+                                >
+                                    <option value="all">All Categories</option>
+                                    {categories.map(category => (
+                                        <option key={category} value={category}>
+                                            {category}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <button 
+                                className="clear-filters" 
+                                onClick={clearFilters}
+                            >
+                                Clear Filters
                             </button>
-                        )}
+                        </div>
                     </div>
                 </div>
                 
                 {items.length === 0 ? (
                     <p>No items registered yet.</p>
+                ) : filteredItems.length === 0 ? (
+                    <p>No items match your filters.</p>
                 ) : (
-                    <>
-                        {isSearching && filteredItems.length === 0 ? (
-                            <p>No items found matching your search.</p>
-                        ) : (
-                            <table className="item-table">
-                                <thead>
-                                    <tr>
-                                        <th>Category</th>
-                                        <th>Location Found</th>
-                                        <th>Date Found</th>
-                                        <th>Date Surrendered</th>
-                                        <th>Description</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {itemsToDisplay.map((item) => (
-                                        <tr key={item.id}>
-                                            <td>{item.category}</td>
-                                            <td>{item.location_found}</td>
-                                            <td>{new Date(item.datetime_found).toLocaleString()}</td>
-                                            <td>{new Date(item.datetime_surrendered).toLocaleString()}</td>
-                                            <td>{item.description}</td>
-                                            <td>{item.claim_status}</td>
-                                            <td>
-                                                <button onClick={() => handleOpenModal(item)}>
-                                                    Mark as Claimed
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
+                    <table className="item-table">
+                        <thead>
+                            <tr>
+                                <th onClick={() => handleSort('category')}>
+                                    Category <SortIcon field="category" />
+                                </th>
+                                <th onClick={() => handleSort('location_found')}>
+                                    Location <SortIcon field="location_found" />
+                                </th>
+                                <th onClick={() => handleSort('datetime_found')}>
+                                    Date Found <SortIcon field="datetime_found" />
+                                </th>
+                                <th onClick={() => handleSort('datetime_surrendered')}>
+                                    Date Surrendered <SortIcon field="datetime_surrendered" />
+                                </th>
+                                <th>Description</th>
+                                <th onClick={() => handleSort('claim_status')}>
+                                    Status <SortIcon field="claim_status" />
+                                </th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredItems.map((item) => (
+                                <tr key={item.id}>
+                                    <td>{item.category}</td>
+                                    <td>{item.location_found}</td>
+                                    <td>{new Date(item.datetime_found).toLocaleString()}</td>
+                                    <td>{new Date(item.datetime_surrendered).toLocaleString()}</td>
+                                    <td>{item.description}</td>
+                                    <td>
+                                        <span className={`status-badge ${item.claim_status}`}>
+                                            {item.claim_status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button 
+                                            onClick={() => handleOpenModal(item)}
+                                            disabled={item.claim_status === 'claimed'}
+                                        >
+                                            {item.claim_status === 'claimed' ? 'Claimed' : 'Mark as Claimed'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 )}
             </div>
 
             {/* Modal for claiming an item */}
             {showModal && (
-                <div className="modal">
+                <div className={`modal ${showModal ? 'active' : ''}`}>
                     <div className="modal-content">
                         <h2>Mark Item as Claimed</h2>
                         <form onSubmit={handleSubmit}>
-                            <div>
+                            <div className="form-group">
                                 <label>Claimer Info:</label>
                                 <input
                                     type="text"
@@ -203,7 +295,7 @@ const ItemStorage = () => {
                                 />
                             </div>
                             
-                            <div>
+                            <div className="form-group">
                                 <label>Claim Date:</label>
                                 <input
                                     type="date"
@@ -213,7 +305,7 @@ const ItemStorage = () => {
                                 />
                             </div>
 
-                            <div>
+                            <div className="form-group">
                                 <label>Claim Time:</label>
                                 <input
                                     type="time"
@@ -224,8 +316,8 @@ const ItemStorage = () => {
                             </div>
 
                             <div className="modal-buttons">
-                                <button type="submit">Submit</button>
-                                <button type="button" onClick={handleCloseModal}>Cancel</button>
+                                <button id= "modal-submit" type="submit">Submit</button>
+                                <button id="modal-cancel" type="button" onClick={handleCloseModal}>Cancel</button>
                             </div>
                         </form>
                     </div>

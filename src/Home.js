@@ -68,53 +68,15 @@ const HomePage = () => {
         };
     }, []);
     
-    const handleSearch = async () => {
-        if (!searchQuery.trim()) {
-            setIsSearching(false);
-            return;
-        }
+    
 
-        try {
-            setIsSearching(true);
-            setLoading(true);
-            
-            // Perform search across multiple fields
-            const { data, error } = await supabase
-                .from("registered_items")
-                .select("*")
-                .or(
-                    `category.ilike.%${searchQuery}%`
-                )
-                .eq("claim_status", "unclaimed")
-                .order("datetime_surrendered", { ascending: false });
-            
-            if (error) throw error;
-            
-            setSearchResults(data || []);
-            
-        } catch (error) {
-            console.error("Error searching items:", error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
-    };
+  
 
     const handleViewAllItems = () => {
         navigate("/items");
     };
 
-    const clearSearch = () => {
-        setSearchQuery("");
-        setIsSearching(false);
-        setSearchResults([]);
-    };
-
+   
     const formatDate = (dateString) => {
         if (!dateString) return "Unknown";
         const date = new Date(dateString);
@@ -130,30 +92,7 @@ const HomePage = () => {
             <div className="Content">
                 <div className="TopBar">
                     <h2>Dashboard</h2>
-                    <div className="SearchBar">
-                        <input 
-                            type="text" 
-                            placeholder="Search Item" 
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                        />
-                        {searchQuery && (
-                            <button 
-                                className="ClearSearchButton"
-                                onClick={clearSearch}
-                            >
-                                ×
-                            </button>
-                        )}
-                        <button 
-                            className="SearchButton"
-                            onClick={handleSearch}
-                        >
-                            Search
-                        </button>
-                        <span className="UserIcon">👤</span>
-                    </div>
+                    
                 </div>
 
                 {/* Announcements Section */}

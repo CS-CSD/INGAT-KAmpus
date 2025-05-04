@@ -27,12 +27,13 @@
 /* Top Bar */
 .TopBar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 10px 20px;
     background: #333;
     color: white;
     border-radius: 10px;
+    
 }
 
 /* Search Bar */
@@ -64,14 +65,6 @@
     overflow-y: auto;
 }
 
-.TopBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e0e0e0;
-}
 
 .SearchBar {
     display: flex;
