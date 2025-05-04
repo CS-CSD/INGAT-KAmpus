@@ -17,17 +17,57 @@ const ItemStorage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [sortField, setSortField] = useState('datetime_surrendered');
     const [sortDirection, setSortDirection] = useState('desc');
-    const [statusFilter, setStatusFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
+    const [locationFilter, setLocationFilter] = useState('all');
     const [categories, setCategories] = useState([]);
+    const [locations, setLocations] = useState([]);
 
     // Fetch data from Supabase
     useEffect(() => {
         fetchItems();
         fetchCategories();
+        fetchLocations();
     }, []);
 
-    // Fetch unique categories for filter dropdown
+    // Apply filters and sorting
+    useEffect(() => {
+        let result = [...items];
+
+        // Apply search filter
+        if (searchQuery.trim() !== '') {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(item => 
+                item.category.toLowerCase().includes(query) 
+            
+            );
+        }
+
+      
+        // Apply category filter
+        if (categoryFilter !== 'all') {
+            result = result.filter(item => item.category === categoryFilter);
+        }
+
+        // Apply location filter
+        if (locationFilter !== 'all') {
+            result = result.filter(item => item.location_found === locationFilter);
+        }
+
+        // Apply sorting
+        result.sort((a, b) => {
+            if (a[sortField] < b[sortField]) {
+                return sortDirection === 'asc' ? -1 : 1;
+            }
+            if (a[sortField] > b[sortField]) {
+                return sortDirection === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+
+        setFilteredItems(result);
+    }, [items, searchQuery, sortField, sortDirection, categoryFilter, locationFilter]);
+
+    // Fetch unique categories
     async function fetchCategories() {
         try {
             const { data, error } = await supabase
@@ -45,55 +85,23 @@ const ItemStorage = () => {
         }
     }
 
-    // Apply filters and sorting whenever dependencies change
-    useEffect(() => {
-        let result = [...items];
+    // Fetch unique locations
+    async function fetchLocations() {
+        try {
+            const { data, error } = await supabase
+                .from("registered_items")
+                .select("location_found")
+                .neq("location_found", null);
 
-        // Apply search filter
-        if (searchQuery.trim() !== '') {
-            const query = searchQuery.toLowerCase();
-            result = result.filter(item => 
-                item.category.toLowerCase().includes(query) ||
-                item.description.toLowerCase().includes(query) ||
-                item.location_found.toLowerCase().includes(query) ||
-                (item.claim_status && item.claim_status.toLowerCase().includes(query))
-            );
-        }
-
-        // Apply category filter
-        if (categoryFilter !== 'all') {
-            result = result.filter(item => item.category === categoryFilter);
-        }
-
-        // Apply sorting
-        result.sort((a, b) => {
-            if (a[sortField] < b[sortField]) {
-                return sortDirection === 'asc' ? -1 : 1;
+            if (error) throw error;
+            if (data) {
+                const uniqueLocations = [...new Set(data.map(item => item.location_found))];
+                setLocations(uniqueLocations);
             }
-            if (a[sortField] > b[sortField]) {
-                return sortDirection === 'asc' ? 1 : -1;
-            }
-            return 0;
-        });
-
-        setFilteredItems(result);
-    }, [items, searchQuery, sortField, sortDirection, statusFilter, categoryFilter]);
-
-    const handleOpenModal = (item) => {
-        setSelectedItem(item);
-        setClaimerInfo('');
-        setTimeClaimed('');
-        setDateClaimed('');
-        setShowModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedItem(null);
-        setClaimerInfo('');
-        setTimeClaimed('');
-        setDateClaimed('');
-        setShowModal(false);
-    };
+        } catch (error) {
+            console.error("Error fetching locations:", error.message);
+        }
+    }
 
     async function fetchItems() {
         try {
@@ -110,6 +118,22 @@ const ItemStorage = () => {
             alert(error.message);
         }
     }
+
+    const handleOpenModal = (item) => {
+        setSelectedItem(item);
+        setClaimerInfo('');
+        setTimeClaimed('');
+        setDateClaimed('');
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedItem(null);
+        setClaimerInfo('');
+        setTimeClaimed('');
+        setDateClaimed('');
+        setShowModal(false);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -161,8 +185,8 @@ const ItemStorage = () => {
 
     const clearFilters = () => {
         setSearchQuery('');
-        setStatusFilter('all');
         setCategoryFilter('all');
+        setLocationFilter('all');
         setSortField('datetime_surrendered');
         setSortDirection('desc');
     };
@@ -180,10 +204,9 @@ const ItemStorage = () => {
             <Sidebar />
             <div className="ClaimedItemContent">
               <div className="top-bar">
-                <h1>Item Storage</h1>
+                <h1> Item Storage</h1>
               </div>
                 <div className="storage-header">
-                 
                     <div className="controls-container">
                         <div className="search-container">
                             <input
@@ -196,8 +219,6 @@ const ItemStorage = () => {
                         </div>
 
                         <div className="filter-controls">
-                           
-
                             <div className="filter-group">
                                 <label>Category:</label>
                                 <select 
@@ -208,6 +229,21 @@ const ItemStorage = () => {
                                     {categories.map(category => (
                                         <option key={category} value={category}>
                                             {category}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="filter-group">
+                                <label>Location:</label>
+                                <select 
+                                    value={locationFilter}
+                                    onChange={(e) => setLocationFilter(e.target.value)}
+                                >
+                                    <option value="all">All Locations</option>
+                                    {locations.map(location => (
+                                        <option key={location} value={location}>
+                                            {location}
                                         </option>
                                     ))}
                                 </select>
@@ -316,7 +352,7 @@ const ItemStorage = () => {
                             </div>
 
                             <div className="modal-buttons">
-                                <button id= "modal-submit" type="submit">Submit</button>
+                                <button id ="modal-submit" type="submit">Submit</button>
                                 <button id="modal-cancel" type="button" onClick={handleCloseModal}>Cancel</button>
                             </div>
                         </form>

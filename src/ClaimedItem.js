@@ -10,41 +10,41 @@ const ClaimedItem = () => {
   const [sortField, setSortField] = useState('claimed_dateTime');
   const [sortDirection, setSortDirection] = useState('desc');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('all');
   const [categories, setCategories] = useState([]);
-  const [dateRangeFilter, setDateRangeFilter] = useState({
-    start: '',
-    end: ''
-  });
-
-  // Fetch data from Supabase
+  const [locations, setLocations] = useState([]);
+ 
+ 
   useEffect(() => {
     fetchItems();
     fetchCategories();
+    fetchLocations();
   }, []);
 
-  // Apply filters and sorting whenever dependencies change
+  
   useEffect(() => {
     let result = [...items];
 
-    // Apply search filter
+   
     if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase();
       result = result.filter(item => 
-        (item.category && item.category.toLowerCase().includes(query)) ||
-        (item.description && item.description.toLowerCase().includes(query)) ||
-        (item.location_found && item.location_found.toLowerCase().includes(query)) ||
-        (item.claimed_by && item.claimed_by.toLowerCase().includes(query))
+        (item.category && item.category.toLowerCase().includes(query))
+
       );
     }
 
-    // Apply category filter
+    
     if (categoryFilter !== 'all') {
       result = result.filter(item => item.category === categoryFilter);
     }
 
-  
+    if (locationFilter !== 'all') {
+      result = result.filter(item => item.location_found === locationFilter);
+    }
 
-    // Apply sorting
+  
+   
     result.sort((a, b) => {
       const aValue = a[sortField] || '';
       const bValue = b[sortField] || '';
@@ -59,7 +59,7 @@ const ClaimedItem = () => {
     });
 
     setFilteredItems(result);
-  }, [items, searchQuery, sortField, sortDirection, categoryFilter, dateRangeFilter]);
+  }, [items, searchQuery, sortField, sortDirection, categoryFilter, locationFilter]);
 
   async function fetchItems() {
     try {
@@ -94,6 +94,23 @@ const ClaimedItem = () => {
     }
   }
 
+  async function fetchLocations() {
+    try {
+      const { data, error } = await supabase
+        .from("claimed_items")
+        .select("location_found")
+        .neq("location_found", null);
+
+      if (error) throw error;
+      if (data) {
+        const uniqueLocations = [...new Set(data.map(item => item.location_found))];
+        setLocations(uniqueLocations);
+      }
+    } catch (error) {
+      console.error("Error fetching locations:", error.message);
+    }
+  }
+
   const handleSort = (field) => {
     if (field === sortField) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -106,7 +123,7 @@ const ClaimedItem = () => {
   const clearFilters = () => {
     setSearchQuery('');
     setCategoryFilter('all');
-    setDateRangeFilter({ start: '', end: '' });
+    setLocationFilter('all');
     setSortField('claimed_dateTime');
     setSortDirection('desc');
   };
@@ -123,11 +140,10 @@ const ClaimedItem = () => {
     <div className="flex">
       <Sidebar />
       <div className="ClaimedItemContent">
-        <div className="top-bar">
-          <h1>Claimed Items</h1>
-        </div>
-       
         <div className="storage-header">
+         <div className="top-bar">
+            <h1>Claimed Items</h1>
+         </div>
           <div className="controls-container">
             <div className="search-container">
               <input
@@ -135,7 +151,6 @@ const ClaimedItem = () => {
                 placeholder="Search items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-            
               />
              
             </div>
@@ -151,6 +166,21 @@ const ClaimedItem = () => {
                   {categories.map(category => (
                     <option key={category} value={category}>
                       {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label>Location:</label>
+                <select 
+                  value={locationFilter}
+                  onChange={(e) => setLocationFilter(e.target.value)}
+                >
+                  <option value="all">All Locations</option>
+                  {locations.map(location => (
+                    <option key={location} value={location}>
+                      {location}
                     </option>
                   ))}
                 </select>
