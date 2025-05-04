@@ -243,3 +243,55 @@
     font-style: italic;
 }
 
+/* Search Bar Styles */
+.SearchBar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.SearchBar input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 300px;
+    padding-right: 30px; /* Space for clear button */
+}
+
+.SearchButton {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.SearchButton:hover {
+    background-color: #45a049;
+}
+
+.ClearSearchButton {
+    position: absolute;
+    right: 90px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 5px;
+}
+
+.ClearSearchButton:hover {
+    color: #666;
+}
+
+/* Loading and no-items styles */
+.loading, .no-items {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
