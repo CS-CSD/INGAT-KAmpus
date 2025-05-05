@@ -25,7 +25,7 @@ const Sidebar = () => {
             <li><Link to="/claimed-items">Claimed Items</Link></li>
             <li><Link to="/report-generation">Report Generation</Link></li>
             <li><Link to="/account">Account</Link></li>
-            {userRole==="manager"?(
+            {(userRole==="manager"||userRole==="admin")?(
               <>
                 <li><Link to="/create-account">Create Account</Link></li>
               </>
