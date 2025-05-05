@@ -221,7 +221,7 @@ select[name="storedIn"] option[value="Reception Desk"] {
 
 .submit-button {
   padding: 14px 28px;
-  background-color: #3498db;
+  background-color:hsl(122, 65%, 56%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -232,7 +232,7 @@ select[name="storedIn"] option[value="Reception Desk"] {
 }
 
 .submit-button:hover {
-  background-color: #2980b9;
+  background-color:hsl(122, 63%, 44%);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./SideBar.js";
 import "./css/Home.css";
-import { supabase } from './supabase'; // Import your Supabase client
+import { supabase } from './supabase';
 
 const HomePage = () => {
     const navigate = useNavigate();
     const [recentItems, setRecentItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [newItemsCount, setNewItemsCount] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
 
-  
     useEffect(() => {
         async function fetchRecentItems() {
             try {
@@ -50,7 +52,6 @@ const HomePage = () => {
         
         fetchRecentItems();
         
-       
         const subscription = supabase
             .channel('registered_items_changes')
             .on('postgres_changes', { 
@@ -58,27 +59,27 @@ const HomePage = () => {
                 schema: 'public', 
                 table: 'registered_items' 
             }, (payload) => {
-                
                 fetchRecentItems();
             })
             .subscribe();
             
-       
         return () => {
             subscription.unsubscribe();
         };
     }, []);
     
     const handleViewAllItems = () => {
-        navigate("/items"); // Navigate to items listing page
+        navigate("/item-storage");
     };
 
-    // Function to format date for display
     const formatDate = (dateString) => {
         if (!dateString) return "Unknown";
         const date = new Date(dateString);
         return date.toLocaleDateString();
     };
+
+    
+    const itemsToDisplay = isSearching ? searchResults : recentItems;
 
     return (
         <div className="HomePage">
@@ -86,13 +87,10 @@ const HomePage = () => {
             <div className="Content">
                 <div className="TopBar">
                     <h2>Dashboard</h2>
-                    <div className="SearchBar">
-                        <input type="text" placeholder="Search" />
-                        <span className="UserIcon">👤</span>
-                    </div>
+                    
                 </div>
 
-                {/* Announcements Section */}
+              
                 <div className="Announcements">
                     <h3>Announcements</h3>
                     <div className="AnnouncementBox">
@@ -100,17 +98,25 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                {/* Lost Items Section */}
+                
                 <div className="LostItems">
-                    <h3>Recently Registered Lost Items</h3>
+                    <h3>
+                        {isSearching ? 
+                            `Search Results for "${searchQuery}"` : 
+                            "Recently Registered Lost Items"}
+                    </h3>
                     
                     {loading ? (
-                        <div className="loading">Loading recent items...</div>
-                    ) : recentItems.length === 0 ? (
-                        <div className="no-items">No lost items registered yet.</div>
+                        <div className="loading">Loading items...</div>
+                    ) : itemsToDisplay.length === 0 ? (
+                        <div className="no-items">
+                            {isSearching ? 
+                                "No items found matching your search." : 
+                                "No lost items registered yet."}
+                        </div>
                     ) : (
                         <div className="ItemsContainer">
-                            {recentItems.map((item) => (
+                            {itemsToDisplay.map((item) => (
                                 <div className="LostItemCard" key={item.id}>
                                     <div className="ItemImage">
                                         {item.image_url ? (
@@ -119,7 +125,7 @@ const HomePage = () => {
                                                 alt={item.category} 
                                                 onError={(e) => {
                                                     e.target.onerror = null;
-                                                    e.target.src = "/placeholder-image.png"; // Fallback image
+                                                    e.target.src = "/placeholder-image.png";
                                                 }}
                                             />
                                         ) : (
@@ -137,12 +143,14 @@ const HomePage = () => {
                         </div>
                     )}
 
-                    {/* New Lost Items Notification */}
-                    <div className="NewLostItems">
-                        <span className="Count">{newItemsCount}</span>
-                        <p>New Lost Items</p>
-                        <button onClick={handleViewAllItems}>View All</button>
-                    </div>
+                    
+                    {!isSearching && (
+                        <div className="NewLostItems">
+                            <span className="Count">{newItemsCount}</span>
+                            <p>New Lost Items</p>
+                            <button onClick={handleViewAllItems}>View All</button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
