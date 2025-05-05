@@ -9,50 +9,45 @@ const LoginPage = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const trimmedId = id.trim();
-  const trimmedPassword = password.trim();
   const { setUser, setRole } = useUser();
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
-    console.log("Attempting login with ID:", trimmedId, "and Password:", trimmedPassword); // Debugging log
-  
-    // Query Supabase
-    const { data, error } = await supabase
-      .from("accounts_table")
-      .select("*")
-      .eq("id", trimmedId)
-      .eq("password", trimmedPassword)
-      .limit(1); // Ensure we only get one row
-  
-    // Log any error returned by Supabase
-    if (error) {
-      console.error("Error during query:", error.message);
-      alert("Error: " + error.message);  // Display error message to user
-      return;
-    }
-  
-    console.log("Data returned from query:", data); // Log the returned data
-  
-    // Proceed to home page if a match is found
-    if (data && data.length > 0) {
-      const userData = data[0];
-      console.log("Fetched Role:", userData.role);
-      setUser(trimmedId);
-      setRole(userData.role);
-      if (userData.role === "student") {
-        navigate('/student-view'); // 👈 Go to item storage if student
-      } else {
-        navigate('/home'); // 👈 Otherwise go to home
+    setLoading(true);
+    setError("");
+
+    try {
+      // Query Supabase
+      const { data, error: queryError } = await supabase
+        .from("accounts_table")
+        .select("*")
+        .eq("id", id.trim())
+        .eq("password", password.trim())
+        .single();
+
+      if (queryError) throw queryError;
+      if (!data) {
+        throw new Error("Invalid credentials");
       }
-    } else {
-      alert("Invalid credentials");
+
+      // Set user context
+      setUser(data.id);
+      setRole(data.role);
+
+      // Redirect based on role
+      const redirectPath = data.role === "student" ? '/student-view' : '/home';
+      navigate(redirectPath);
+      
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
-  
 
   return (
     <div className="login-container">
@@ -62,10 +57,11 @@ const LoginPage = () => {
 
       <div className="login-box">
         <h2>Welcome</h2>
+        {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleLogin}>
           <div>
             <input
-              type="text"  // Changed from "id" to "text"
+              type="text"
               placeholder="ID"
               value={id}
               onChange={(e) => setId(e.target.value)}
@@ -92,7 +88,9 @@ const LoginPage = () => {
           <div className="text-right">
             <button type="button">Forgot Password?</button>
           </div>
-          <button type="submit">Login</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
       </div>
     </div>
