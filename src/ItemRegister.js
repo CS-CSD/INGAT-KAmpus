@@ -144,43 +144,40 @@ const RegisterItem = () => {
 
   const handleRegisterItem = async (e) => {
     e.preventDefault();
-    
+  
     if (!validateForm()) {
-      // Scroll to first error
       const firstError = document.querySelector(".error-message");
       if (firstError) {
         firstError.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       return;
     }
-    
+  
     setIsSubmitting(true);
-    
+  
     const datetimeFound = `${formData.dateFound} ${formData.timeFound}`;
     const datetimeSurrendered = `${formData.dateSurrendered} ${formData.timeSurrendered}`;
-    
+  
     try {
-
-      
-if (formData.image) {
-  // Ensure we extract the file extension safely
-const fileExt = formData.image.name.split('.').pop();
-const fileName = `${Date.now()}.${fileExt}`;
-const filePath = `unclaimed/${fileName}`; // or 'claimed/'
-
-
-  const { error: uploadError } = await supabase.storage
-    .from('images')
-    .upload(filePath, formData.image, {
-      contentType: formData.image.type || 'image/png', // fallback to image/png
-    });
-
-  if (uploadError) throw uploadError;
-
-}
-
-      
-      const { data, error } = await supabase
+      let imagePath = null;
+  
+      // Upload image if one exists
+      if (formData.image) {
+        const fileExt = formData.image.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        imagePath = `unclaimed/${fileName}`;
+  
+        const { error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(imagePath, formData.image, {
+            contentType: formData.image.type || 'image/png',
+          });
+  
+        if (uploadError) throw uploadError;
+      }
+  
+      // Insert everything in one go
+      const { error } = await supabase
         .from("registered_items")
         .insert({
           category: formData.category,
@@ -192,11 +189,12 @@ const filePath = `unclaimed/${fileName}`; // or 'claimed/'
           datetime_found: datetimeFound,
           processed_by: userId,
           claim_status: "unclaimed",
+          image_url: imagePath, // only included if an image was uploaded
         });
-
+  
       if (error) throw error;
-      
-      // Clear form data and show success message
+  
+      // Clear form
       setFormData({
         category: "",
         locationFound: "",
@@ -209,15 +207,13 @@ const filePath = `unclaimed/${fileName}`; // or 'claimed/'
         timeFound: "",
         image: null,
       });
-      
+  
       setImagePreview(null);
       setSuccessMessage("Item successfully registered!");
-      
-      // Clear success message after 5 seconds
+  
       setTimeout(() => {
         setSuccessMessage("");
       }, 5000);
-      
     } catch (error) {
       console.error("Registration failed:", error.message);
       setErrors({ submit: error.message });
@@ -225,6 +221,7 @@ const filePath = `unclaimed/${fileName}`; // or 'claimed/'
       setIsSubmitting(false);
     }
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
