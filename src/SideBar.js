@@ -14,6 +14,7 @@ const Sidebar = () => {
           // If the user is a student, only show "Item Storage" and "Log Out"
           <>
             <li><Link to="/student-view">Item Storage</Link></li>
+            <li><Link to="/account">Account</Link></li>
             <li><Link to="/logout">Log Out</Link></li>
           </>
         ) : (
