@@ -27,7 +27,20 @@ const HomePage = () => {
                 
                 if (error) throw error;
                 
-                setRecentItems(data || []);
+                const itemsWithPublicUrls = (data || []).map(item => {
+                    const { data: publicUrlData } = supabase
+                      .storage
+                      .from('images') // your bucket name
+                      .getPublicUrl(item.image_url);
+                    
+                    return {
+                      ...item,
+                      image_url: publicUrlData.publicUrl, // replace image_url with full URL
+                    };
+                  });
+                  
+                  setRecentItems(itemsWithPublicUrls);
+                  
                 
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
