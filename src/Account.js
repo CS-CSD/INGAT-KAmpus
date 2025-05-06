@@ -5,7 +5,7 @@ import { useUser } from './userContext';
 import "./css/Account.css";
 
 const Account = () => {
-  const { userId, userRole } = useUser();
+  const { userId} = useUser();
   const [user, setUser] = useState({
     id: "",
     first_name: "",

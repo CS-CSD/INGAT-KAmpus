@@ -160,25 +160,25 @@ const RegisterItem = () => {
     const datetimeSurrendered = `${formData.dateSurrendered} ${formData.timeSurrendered}`;
     
     try {
-      let imageUrl = null;
+
       
-      if (formData.image) {
-        const fileExt = formData.image.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `item-images/${fileName}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('items')
-          .upload(filePath, formData.image);
-          
-        if (uploadError) throw uploadError;
-        
-        const { data: urlData } = supabase.storage
-          .from('items')
-          .getPublicUrl(filePath);
-          
-        imageUrl = urlData.publicUrl;
-      }
+if (formData.image) {
+  // Ensure we extract the file extension safely
+const fileExt = formData.image.name.split('.').pop();
+const fileName = `${Date.now()}.${fileExt}`;
+const filePath = `unclaimed/${fileName}`; // or 'claimed/'
+
+
+  const { error: uploadError } = await supabase.storage
+    .from('images')
+    .upload(filePath, formData.image, {
+      contentType: formData.image.type || 'image/png', // fallback to image/png
+    });
+
+  if (uploadError) throw uploadError;
+
+}
+
       
       const { data, error } = await supabase
         .from("registered_items")
@@ -192,7 +192,6 @@ const RegisterItem = () => {
           datetime_found: datetimeFound,
           processed_by: userId,
           claim_status: "unclaimed",
-          image_url: imageUrl,
         });
 
       if (error) throw error;
