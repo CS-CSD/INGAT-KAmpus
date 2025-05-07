@@ -69,7 +69,13 @@ const ClaimedItem = () => {
 
       if (error) throw error;
       if (data) {
-        setItems(data);
+                        // Map each item to convert image_url path into a full public URL
+                        const itemsWithPublicUrls = data.map(item => ({
+                          ...item,
+                          image_url: item.image_url, // keep as is
+                        }));
+                        ;
+                        setItems(itemsWithPublicUrls);
       }
     } catch (error) {
       console.error("Fetch failed:", error.message);
@@ -210,6 +216,7 @@ const ClaimedItem = () => {
                 <th onClick={() => handleSort('location_found')}>
                   Location <SortIcon field="location_found" />
                 </th>
+                <th>Image</th>
                 <th onClick={() => handleSort('datetime_found')}>
                   Date Found <SortIcon field="datetime_found" />
                 </th>
@@ -232,6 +239,18 @@ const ClaimedItem = () => {
                 <tr key={item.id}>
                   <td>{item.category}</td>
                   <td>{item.location_found}</td>
+                  <td>
+                    {/* Render the image */}
+                    {item.image_url ? (
+                        <img 
+                            src={item.image_url} 
+                            alt={item.category} 
+                            style={{ width: '50px', height: '50px', objectFit: 'cover' }} // Optional styling
+                        />
+                    ) : (
+                        <div>No Image</div>
+                    )}
+                </td>
                   <td>{item.datetime_found ? new Date(item.datetime_found).toLocaleString() : 'N/A'}</td>
                   <td>{item.datetime_surrendered ? new Date(item.datetime_surrendered).toLocaleString() : 'N/A'}</td>
                   <td>{item.description}</td>
