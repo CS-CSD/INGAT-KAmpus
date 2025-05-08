@@ -53,7 +53,7 @@ import React, { useState } from "react";
      }
    };
  
-   const roles = ["admin","student","manager","staff"];
+   const roles = ["Admin","Student","Manager","Staff"];
  
    return (
      <div className="AccountContent">
