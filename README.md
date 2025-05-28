@@ -1,3 +1,16 @@
+#  Project Name:  INGAT KAmpus: A Lost and Found System for DLSL
+#  Description: It is a lost and Found System created for De La Salle Lipa that can maintains information such as Items lost and found by the people of DLSL containing information relevant to the item surrendered or claimed.
+
+# Git Pull
+to get all items
+
+# npm install
+install all dependencies
+
+# npm start
+start project
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
